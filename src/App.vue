@@ -1,8 +1,13 @@
 <template>
   <div id="app">
-    <PosterBg :poster="PosterBg"/>
-    <MoviesList :list="moviesList" @changePoster="onChangePoster"/>
-    <MoviesPagination :current-page="currentPage" :per-page="moviesPerPage" :total="moviesLength" @pageChanged="onPageChanged"/>
+    <PosterBg :poster="posterBg" />
+    <MoviesList :list="moviesList" @changePoster="onChangePoster" />
+    <MoviesPagination
+      :current-page="currentPage"
+      :per-page="moviesPerPage"
+      :total="moviesLength"
+      @pageChanged="onPageChanged"
+    />
   </div>
 </template>
 
@@ -13,25 +18,40 @@ import PosterBg from "@/components/PosterBg";
 import MoviesPagination from "@/components/MoviesPagination";
 
 export default {
-  name: "App",
+  name: "app",
   components: {
     MoviesList,
     PosterBg,
     MoviesPagination
   },
   data: () => ({
-    PosterBg: ""
+    posterBg: ""
   }),
   computed: {
-    ...mapGetters("movies", ["moviesList", "currentPage", "moviesPerPage", "moviesLength"])
+    ...mapGetters("movies", [
+      "moviesList",
+      "currentPage",
+      "moviesPerPage",
+      "moviesLength"
+    ])
+  },
+  watch: {
+    "$route.query": {
+      handler: "onPageQueryChange",
+      immediate: true,
+      deep: true
+    }
   },
   methods: {
-    ...mapActions("movies",["changeCurrentPage"]),
+    ...mapActions("movies", ["changeCurrentPage"]),
+    onPageQueryChange({ page = 1 }) {
+      this.changeCurrentPage(Number(page));
+    },
     onChangePoster(poster) {
-      this.PosterBg = poster;
+      this.posterBg = poster;
     },
     onPageChanged(page) {
-      this.changeCurrentPage(page);
+      this.$router.push({ query: { page } });
     }
   }
 };
