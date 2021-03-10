@@ -1,14 +1,14 @@
 <template>
   <div class="movies-pagination d-flex justify-content-center">
     <BPagination
-    v-model="currentPageModel"
-    :per-page="perPage"
-    :total-rows="total"
-    prev-text="Prev"
-    next-text="Next"
-  />
+      v-model="currentPageModel"
+      :per-page="perPage"
+      :total-rows="total"
+      prev-text="Prev"
+      next-text="Next"
+    />
 
-  {{ currentPage }}
+    {{ currentPage }}
   </div>
 </template>
 
@@ -36,10 +36,10 @@ export default {
       },
       set(value) {
         this.$emit("pageChanged", value);
-      },
+      }
     }
   }
-}
+};
 </script>
 
 <style scoped>

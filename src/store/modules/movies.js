@@ -7,7 +7,7 @@ function serializeResponse(movies) {
     acc[movie.imdbID] = movie;
     return acc;
   }, {});
-};
+}
 
 const { MOVIES, CURRENT_PAGE } = mutations;
 
@@ -21,10 +21,10 @@ const moviesStore = {
   },
   getters: {
     moviesList: ({ movies }) => movies,
-    slicedIDs: ({top250IDs}) => (from, to) => top250IDs.slice(from, to),
-    currentPage: ({currentPage}) => currentPage,
-    moviesPerPage: ({moviesPerPage}) => moviesPerPage,
-    moviesLength: ({top250IDs}) => Object.keys(top250IDs).length
+    slicedIDs: ({ top250IDs }) => (from, to) => top250IDs.slice(from, to),
+    currentPage: ({ currentPage }) => currentPage,
+    moviesPerPage: ({ moviesPerPage }) => moviesPerPage,
+    moviesLength: ({ top250IDs }) => Object.keys(top250IDs).length
   },
   mutations: {
     [MOVIES](state, value) {
@@ -32,7 +32,7 @@ const moviesStore = {
     },
     [CURRENT_PAGE](state, value) {
       state.currentPage = value;
-    },
+    }
   },
   actions: {
     initMoviesStore: {
@@ -41,24 +41,27 @@ const moviesStore = {
       },
       root: true
     },
-    async fetchMovies({ getters, commit }) {
+    async fetchMovies({ getters, commit, dispatch }) {
       try {
+        dispatch("toggleLoader", true, { root: true });
         const { currentPage, moviesPerPage, slicedIDs } = getters;
         const from = currentPage * moviesPerPage - moviesPerPage;
         const to = currentPage * moviesPerPage;
         const moviesToFetch = slicedIDs(from, to);
-        const requests = moviesToFetch.map( id => axios.get(`/?i=${id}`));
+        const requests = moviesToFetch.map(id => axios.get(`/?i=${id}`));
         const response = await Promise.all(requests);
         const movies = serializeResponse(response);
         commit(MOVIES, movies);
-      } catch(err) {
+      } catch (err) {
         console.log(err);
+      } finally {
+        dispatch("toggleLoader", false, { root: true });
       }
     },
-    changeCurrentPage({commit, dispatch}, page) {
+    changeCurrentPage({ commit, dispatch }, page) {
       commit(CURRENT_PAGE, page);
       dispatch("fetchMovies");
-    },
+    }
   }
 };
 

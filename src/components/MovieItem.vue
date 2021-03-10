@@ -24,7 +24,7 @@ export default {
   props: {
     movie: {
       type: Object,
-      required: true,
+      required: true
     }
   },
   computed: {
@@ -79,5 +79,4 @@ export default {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.7);
 }
-
 </style>
